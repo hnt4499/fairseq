@@ -1053,3 +1053,17 @@ def transformer_wmt_en_de_big_t2t(args):
     args.attention_dropout = getattr(args, "attention_dropout", 0.1)
     args.activation_dropout = getattr(args, "activation_dropout", 0.1)
     transformer_vaswani_wmt_en_de_big(args)
+
+
+# Dummy model for experimenting
+@register_model_architecture("transformer", "dummy")
+def transformer_dummy(args):
+    args.encoder_embed_dim = getattr(args, "encoder_embed_dim", 32)
+    args.encoder_ffn_embed_dim = getattr(args, "encoder_ffn_embed_dim", 64)
+    args.encoder_attention_heads = getattr(args, "encoder_attention_heads", 2)
+    args.encoder_layers = getattr(args, "encoder_layers", 2)
+    args.decoder_embed_dim = getattr(args, "decoder_embed_dim", 32)
+    args.decoder_ffn_embed_dim = getattr(args, "decoder_ffn_embed_dim", 64)
+    args.decoder_attention_heads = getattr(args, "decoder_attention_heads", 2)
+    args.decoder_layers = getattr(args, "decoder_layers", 2)
+    base_architecture(args)
