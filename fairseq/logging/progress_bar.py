@@ -49,6 +49,8 @@ def progress_bar(
         bar = NoopProgressBar(iterator, epoch, prefix)
     elif log_format == "simple":
         bar = SimpleProgressBar(iterator, epoch, prefix, log_interval)
+    elif log_format == "another_simple":
+        bar = AnotherSimpleProgressBar(iterator, epoch, prefix, log_interval)
     elif log_format == "tqdm":
         bar = TqdmProgressBar(iterator, epoch, prefix)
     else:
@@ -263,6 +265,35 @@ class SimpleProgressBar(BaseProgressBar):
                         self.prefix, self.i + 1, self.size, postfix
                     )
                 )
+
+    def print(self, stats, tag=None, step=None):
+        """Print end-of-epoch stats."""
+        postfix = self._str_pipes(self._format_stats(stats))
+        with rename_logger(logger, tag):
+            logger.info("{} | {}".format(self.prefix, postfix))
+
+
+class AnotherSimpleProgressBar(BaseProgressBar):
+    """A minimal logger for non-TTY environments with self-purpose logging."""
+
+    def __init__(self, iterable, epoch=None, prefix=None, log_interval=1000):
+        super().__init__(iterable, epoch, prefix)
+        self.log_interval = log_interval
+        self.i = None
+        self.size = None
+
+    def __iter__(self):
+        self.size = len(self.iterable)
+        for i, obj in enumerate(self.iterable, start=self.n):
+            self.i = i
+            yield obj
+
+    def log(self, step=None):
+        """Log intermediate stats according to log_interval."""
+        step = step or self.i or 0
+        if (self.log_interval is not None
+                and (step + 1) % self.log_interval == 0):
+            logger.info(f"{self.prefix}: {self.i + 1}/{self.size}")
 
     def print(self, stats, tag=None, step=None):
         """Print end-of-epoch stats."""
