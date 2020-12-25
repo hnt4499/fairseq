@@ -231,8 +231,12 @@ class TranslationTask(LegacyFairseqTask):
         parser.add_argument('--eval-bleu-args', type=str, metavar='JSON',
                             help='generation args for BLUE scoring, '
                                  'e.g., \'{"beam": 4, "lenpen": 0.6}\'')
-        parser.add_argument('--eval-bleu-print-samples', action='store_true',
-                            help='print sample generations during validation')
+        parser.add_argument('--eval-bleu-print-samples', type=int, default=0,
+                            help='Maximum number of translation samples '
+                                 '(hypothesis and reference pairs) to print. '
+                                 'Only the first pairs within each batch is '
+                                 'considered. Defaults to 0 (meaning no '
+                                 'samples will be ''printed).')
         # fmt: on
 
     def __init__(self, args, src_dict, tgt_dict):
@@ -411,6 +415,10 @@ class TranslationTask(LegacyFairseqTask):
         """Return the target :class:`~fairseq.data.Dictionary`."""
         return self.tgt_dict
 
+    def begin_valid_epoch(self, epoch, model):
+        """Reset print counter"""
+        self.num_samples_printed = 0
+
     def _inference_with_bleu(self, generator, sample, model):
         import sacrebleu
 
@@ -439,9 +447,10 @@ class TranslationTask(LegacyFairseqTask):
                     escape_unk=True,  # don't count <unk> as matches to the hypo
                 )
             )
-        if self.args.eval_bleu_print_samples:
+        if self.num_samples_printed < self.args.eval_bleu_print_samples:
             logger.info("example hypothesis: " + hyps[0])
             logger.info("example reference: " + refs[0])
+            self.num_samples_printed += 1
         if self.args.eval_tokenized_bleu:
             return sacrebleu.corpus_bleu(hyps, [refs], tokenize="none")
         else:
