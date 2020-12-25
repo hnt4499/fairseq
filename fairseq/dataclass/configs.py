@@ -352,6 +352,21 @@ class DistributedTrainingConfig(FairseqDataclass):
         default="none", metadata={"help": "ZeRO sharding"}
     )
     tpu: bool = II("common.tpu")
+    val_suppress_progress_bar: bool = field(
+        default=False,
+        metadata={
+            "help": "if set, suppress progress bar during evaluation. Useful "
+            "when training on Google Colab."
+        },
+    )
+    val_log_interval: Optional[int] = field(
+        default=None,
+        metadata={
+            "help": "if not None, print evaluation progress every N iterations"
+                    ". Used only when `--val-suppress-progress-bar` is set."
+        },
+    )
+
 
 
 @dataclass

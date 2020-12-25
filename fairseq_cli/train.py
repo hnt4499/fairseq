@@ -357,9 +357,15 @@ def validate(
         itr = trainer.get_valid_iterator(subset).next_epoch_itr(shuffle=False)
         if cfg.common.tpu:
             itr = utils.tpu_data_loader(itr)
+        val_suppress_progress_bar = cfg.distributed_training.get(
+            "val_suppress_progress_bar", False)
+        if val_suppress_progress_bar:
+            log_format = "none"
+        else:
+            log_format = cfg.common.log_format
         progress = progress_bar.progress_bar(
             itr,
-            log_format=cfg.common.log_format,
+            log_format=log_format,
             log_interval=cfg.common.log_interval,
             epoch=epoch_itr.epoch,
             prefix=f"valid on '{subset}' subset",
@@ -381,9 +387,16 @@ def validate(
 
         # create a new root metrics aggregator so validation metrics
         # don't pollute other aggregators (e.g., train meters)
+        val_log_interval = cfg.distributed_training.get(
+            "val_log_interval", None)
         with metrics.aggregate(new_root=True) as agg:
-            for sample in progress:
+            for i, sample in enumerate(progress):
                 trainer.valid_step(sample)
+                if val_suppress_progress_bar:
+                    if (val_log_interval is not None and val_log_interval > 0
+                            and (i + 1) % val_log_interval == 0):
+                        logger.info(f"valid on '{subset} subset: "
+                                    f"{i + 1}/{len(progress)}'")
 
         # log validation stats
         stats = get_valid_stats(cfg, trainer, agg.get_smoothed_values())
