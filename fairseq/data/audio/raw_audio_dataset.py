@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 
 
-import logging
+from loguru import logger
 import os
 import sys
 
@@ -13,9 +13,10 @@ import torch
 import torch.nn.functional as F
 
 from .. import FairseqDataset
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 class RawAudioDataset(FairseqDataset):

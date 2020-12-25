@@ -4,8 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import sys
 import argparse
-import logging
+from loguru import logger
 import os
 import os.path as op
 import shutil
@@ -22,9 +23,17 @@ from examples.speech_to_text.data_utils import (
 )
 from torchaudio.datasets import LIBRISPEECH
 from tqdm import tqdm
+from fairseq import utils_loguru
 
 
-log = logging.getLogger(__name__)
+utils_loguru._reset_logger(logger)
+logger.add(
+    sys.stdout, colorize=True,
+    format=("<green>{time:YYYY-MM-DD at HH:mm:ss}</green> "
+            "| <cyan>{extra[name]}</cyan> | {message}")
+)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
+
 
 SPLITS = [
     "train-clean-100",

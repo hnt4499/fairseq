@@ -4,20 +4,20 @@
 # LICENSE file in the root directory of this source tree.
 
 import copy
-import logging
+from loguru import logger
 from typing import Dict, List
 
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.data import encoders
 from fairseq.hub_utils import GeneratorHubInterface
 from omegaconf import open_dict
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 class BARTHubInterface(GeneratorHubInterface):

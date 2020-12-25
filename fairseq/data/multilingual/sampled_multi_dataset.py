@@ -5,7 +5,7 @@
 
 import datetime
 import hashlib
-import logging
+from loguru import logger
 import time
 from bisect import bisect_right
 from collections import OrderedDict, defaultdict
@@ -16,15 +16,16 @@ import numpy as np
 import torch
 from fairseq import distributed_utils
 from fairseq.data import FairseqDataset, data_utils
+from fairseq import utils_loguru
+
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def get_time_gap(s, e):
     return (
         datetime.datetime.fromtimestamp(e) - datetime.datetime.fromtimestamp(s)
     ).__str__()
-
-
-logger = logging.getLogger(__name__)
 
 
 def default_virtual_size_func(datasets, ratios, max_scale_up=1.5):

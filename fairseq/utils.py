@@ -7,7 +7,7 @@ import argparse
 import contextlib
 import copy
 import importlib
-import logging
+from loguru import logger
 import os
 import sys
 import tempfile
@@ -23,6 +23,7 @@ from fairseq.logging.meters import safe_round
 from fairseq.modules import gelu, gelu_accurate
 from fairseq.modules.multihead_attention import MultiheadAttention
 from torch import Tensor
+from fairseq import utils_loguru
 
 
 try:
@@ -38,7 +39,7 @@ except ImportError:
     xm = None
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 MANIFOLD_PATH_SEP = "|"

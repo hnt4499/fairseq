@@ -41,11 +41,11 @@ URLS = [
 ]
 
 TRAIN_CORPORA = [
-    "europarl-v7.fr-en",
-    "commoncrawl.fr-en",
-    "undoc.2000.fr-en",
+    # "europarl-v7.fr-en",
+    # "commoncrawl.fr-en",
+    # "undoc.2000.fr-en",
     "news-commentary-v9.fr-en",
-    "giga-fren.release2.fixed",
+    # "giga-fren.release2.fixed",
 ]
 TEST_CORPUS = "newstest2014-fren-{}.{}.sgm"
 

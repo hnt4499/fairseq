@@ -11,7 +11,7 @@ and `huggingface <https://github.com/huggingface>`_.
 
 import fnmatch
 import json
-import logging
+from loguru import logger
 import os
 import shutil
 import tarfile
@@ -19,6 +19,7 @@ import tempfile
 from functools import partial, wraps
 from hashlib import sha256
 from io import open
+from fairseq import utils_loguru
 
 
 try:
@@ -48,7 +49,8 @@ except (AttributeError, ImportError):
 CONFIG_NAME = "config.json"
 WEIGHTS_NAME = "pytorch_model.bin"
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def load_archive_file(archive_file):

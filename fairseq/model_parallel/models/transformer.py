@@ -3,7 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 
 import torch.nn as nn
 import torch.nn.functional as F
@@ -30,8 +30,10 @@ try:
 except (ImportError, ModuleNotFoundError):
     has_megatron_submodule = False
 
+from fairseq import utils_loguru
 
-logger = logging.getLogger(__name__)
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_model("model_parallel_transformer")

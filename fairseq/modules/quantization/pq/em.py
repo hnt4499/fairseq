@@ -3,12 +3,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import os
 import random
 from collections import Counter
 
 import torch
+from fairseq import utils_loguru
+
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 class EM:
@@ -84,7 +88,7 @@ class EM:
         obj = (self.centroids[self.assignments].t() - self.W).norm(p=2).item()
         self.objective.append(obj)
         if self.verbose:
-            logging.info(
+            logger.info(
                 f"Iteration: {i},\t"
                 f"objective: {obj:.6f},\t"
                 f"resolved empty clusters: {n_empty_clusters}"
@@ -122,7 +126,7 @@ class EM:
 
             # increment tentatives
             if tentatives == self.max_tentatives:
-                logging.info(
+                logger.info(
                     f"Could not resolve all empty clusters, {len(empty_clusters)} remaining"
                 )
                 raise EmptyClusterResolveError

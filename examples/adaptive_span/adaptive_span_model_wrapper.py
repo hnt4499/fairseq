@@ -3,7 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
@@ -15,9 +15,10 @@ from fairseq.models import (
     register_model,
 )
 from .adaptive_span_model import TransformerSeq as AdaptiveSpanTransformerModel
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @dataclass

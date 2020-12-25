@@ -3,15 +3,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 
 import numpy as np
 import torch
 from fairseq.data import Dictionary, FairseqDataset
 from fairseq.tasks import LegacyFairseqTask, register_task
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_task("dummy_masked_lm")

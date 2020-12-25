@@ -3,13 +3,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 
 import torch
 import torch.nn.functional as F
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def _cross_entropy_pytorch(logits, target, ignore_index=None, reduction="mean"):

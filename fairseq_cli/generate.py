@@ -8,7 +8,7 @@ Translate pre-processed data with a trained model.
 """
 
 import ast
-import logging
+from loguru import logger
 import math
 import os
 import sys
@@ -23,6 +23,7 @@ from fairseq.dataclass.utils import convert_namespace_to_omegaconf
 from fairseq.logging import progress_bar
 from fairseq.logging.meters import StopwatchMeter, TimeMeter
 from omegaconf import DictConfig
+from fairseq.utils_loguru import loguru_name_patcher, loguru_reset_logger
 
 
 def main(cfg: DictConfig):
@@ -58,13 +59,13 @@ def get_symbols_to_strip_from_output(generator):
 
 
 def _main(cfg: DictConfig, output_file):
-    logging.basicConfig(
-        format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        level=os.environ.get("LOGLEVEL", "INFO").upper(),
-        stream=output_file,
+    loguru_reset_logger(logger)
+    logger.add(
+        sys.stderr, colorize=True,
+        format=("<green>{time:YYYY-MM-DD at HH:mm:ss}</green> "
+                "| <cyan>{extra[name]}</cyan> | {message}")
     )
-    logger = logging.getLogger("fairseq_cli.generate")
+    logger = logger.patch(loguru_name_patcher)
 
     utils.import_user_module(cfg.common)
 

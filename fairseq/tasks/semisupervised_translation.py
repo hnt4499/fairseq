@@ -3,11 +3,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import os
 from collections import OrderedDict
 
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.data import (
     BacktranslationDataset,
     IndexedCachedDataset,
@@ -26,7 +26,7 @@ from . import register_task
 from .multilingual_translation import MultilingualTranslationTask
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def _get_bt_dataset_key(lang_pair):

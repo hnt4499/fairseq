@@ -3,12 +3,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import os
 
 import numpy as np
 import torch
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.data import (
     ConcatDataset,
     Dictionary,
@@ -29,7 +29,7 @@ from fairseq.data import (
 from fairseq.tasks import LegacyFairseqTask, register_task
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_task("multilingual_masked_lm")

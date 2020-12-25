@@ -6,18 +6,18 @@
 
 import argparse
 import copy
-import logging
+from loguru import logger
 import os
 from typing import Any, Dict, Iterator, List
 
 import torch
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.data import encoders
 from omegaconf import open_dict
 from torch import nn
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def from_pretrained(

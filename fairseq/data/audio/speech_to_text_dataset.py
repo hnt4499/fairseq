@@ -5,7 +5,7 @@
 
 import csv
 import io
-import logging
+from loguru import logger
 import os.path as op
 import re
 from typing import Dict, List, Optional, Tuple
@@ -21,9 +21,10 @@ from fairseq.data import (
 )
 from fairseq.data.audio.audio_utils import get_fbank, get_waveform
 from fairseq.data.audio.feature_transforms import CompositeAudioFeatureTransform
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 class S2TDataConfig(object):

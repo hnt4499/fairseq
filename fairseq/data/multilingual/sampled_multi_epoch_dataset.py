@@ -4,16 +4,17 @@
 # LICENSE file in the root directory of this source tree.
 
 import hashlib
-import logging
+from loguru import logger
 import math
 
 import numpy as np
 from fairseq.data import SampledMultiDataset
 
 from .sampled_multi_dataset import CollateFormat, default_virtual_size_func
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 class SampledMultiEpochDataset(SampledMultiDataset):

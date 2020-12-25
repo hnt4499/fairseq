@@ -3,11 +3,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import os
 
 import numpy as np
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.data import (
     ConcatSentencesDataset,
     Dictionary,
@@ -28,7 +28,7 @@ from fairseq.data.shorten_dataset import maybe_shorten_dataset
 from fairseq.tasks import LegacyFairseqTask, register_task
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_task("sentence_prediction")

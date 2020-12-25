@@ -4,9 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import sys
 import argparse
 import csv
-import logging
+from loguru import logger
 import os
 import os.path as op
 import shutil
@@ -28,9 +29,16 @@ from torch import Tensor
 from torch.utils.data import Dataset
 from torchaudio.datasets.utils import download_url, extract_archive
 from tqdm import tqdm
+from fairseq import utils_loguru
 
 
-log = logging.getLogger(__name__)
+utils_loguru._reset_logger(logger)
+logger.add(
+    sys.stdout, colorize=True,
+    format=("<green>{time:YYYY-MM-DD at HH:mm:ss}</green> "
+            "| <cyan>{extra[name]}</cyan> | {message}")
+)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 MANIFEST_COLUMNS = ["id", "audio", "n_frames", "tgt_text", "speaker"]

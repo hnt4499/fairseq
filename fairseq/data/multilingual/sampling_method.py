@@ -3,11 +3,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 from typing import List
 
+from fairseq import utils_loguru
 
-logger = logging.getLogger(__name__)
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def uniform(dataset_sizes: List[int]):

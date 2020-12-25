@@ -8,7 +8,7 @@ Train a new model on one or across multiple GPUs.
 """
 
 import argparse
-import logging
+from loguru import logger
 import math
 import os
 import sys
@@ -31,15 +31,16 @@ from fairseq.logging import meters, metrics, progress_bar
 from fairseq.model_parallel.megatron_trainer import MegatronTrainer
 from omegaconf import DictConfig
 from fairseq.trainer import Trainer
+from fairseq.utils_loguru import loguru_name_patcher, loguru_reset_logger
 
 
-logging.basicConfig(
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    level=os.environ.get("LOGLEVEL", "INFO").upper(),
-    stream=sys.stdout,
+loguru_reset_logger(logger)
+logger.add(
+    sys.stdout, colorize=True,
+    format=("<green>{time:YYYY-MM-DD at HH:mm:ss}</green> "
+            "| <cyan>{extra[name]}</cyan> | {message}")
 )
-logger = logging.getLogger("fairseq_cli.train")
+logger = logger.patch(loguru_name_patcher)
 
 
 def main(cfg: DictConfig) -> None:

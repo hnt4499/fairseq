@@ -9,7 +9,7 @@ Wrapper around various loggers and progress bars (e.g., tqdm).
 
 import atexit
 import json
-import logging
+from loguru import logger
 import os
 import sys
 from collections import OrderedDict
@@ -20,9 +20,10 @@ from typing import Optional
 import torch
 
 from .meters import AverageMeter, StopwatchMeter, TimeMeter
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def progress_bar(
@@ -161,11 +162,8 @@ class BaseProgressBar(object):
 
 @contextmanager
 def rename_logger(logger, new_name):
-    old_name = logger.name
-    if new_name is not None:
-        logger.name = new_name
+    """Do nothing"""
     yield logger
-    logger.name = old_name
 
 
 class JsonProgressBar(BaseProgressBar):
@@ -284,7 +282,8 @@ class TqdmProgressBar(BaseProgressBar):
             iterable,
             self.prefix,
             leave=False,
-            disable=(logger.getEffectiveLevel() > logging.INFO),
+            disable=(utils_loguru.get_effective_level(logger)
+                     > utils_loguru.LoguruLevels.INFO),
         )
 
     def __iter__(self):

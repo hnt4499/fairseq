@@ -8,7 +8,7 @@ Train a network across multiple GPUs.
 """
 
 import contextlib
-import logging
+from loguru import logger
 import sys
 import time
 from argparse import Namespace
@@ -16,7 +16,7 @@ from itertools import chain
 from typing import Any, Dict, List
 
 import torch
-from fairseq import checkpoint_utils, distributed_utils, models, optim, utils
+from fairseq import checkpoint_utils, distributed_utils, models, optim, utils, utils_loguru
 from fairseq.dataclass.configs import FairseqConfig
 from fairseq.dataclass.utils import convert_namespace_to_omegaconf
 from fairseq.file_io import PathManager
@@ -25,7 +25,7 @@ from fairseq.nan_detector import NanDetector
 from fairseq.optim import lr_scheduler
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 class Trainer(object):

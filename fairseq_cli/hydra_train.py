@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import os
 import sys
 
@@ -12,13 +12,11 @@ from fairseq.dataclass.initialize import hydra_init
 from fairseq_cli.train import main as pre_main
 from fairseq import distributed_utils
 from fairseq.dataclass.configs import FairseqConfig
+from fairseq.utils_loguru import loguru_reset_logger, loguru_name_patcher
 
 import hydra
 import torch
 from omegaconf import OmegaConf
-
-
-logger = logging.getLogger("fairseq_cli.hydra_train")
 
 
 @hydra.main(config_path=os.path.join("..", "fairseq", "config"), config_name="config")
@@ -39,18 +37,14 @@ def hydra_main(cfg: FairseqConfig) -> None:
 
 
 def reset_logging():
-    root = logging.getLogger()
-    for handler in root.handlers:
-        root.removeHandler(handler)
-    root.setLevel(os.environ.get("LOGLEVEL", "INFO").upper())
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(
-        logging.Formatter(
-            fmt="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S",
-        )
+    global logger
+    loguru_reset_logger(logger)
+    logger.add(
+        sys.stdout, colorize=True,
+        format=("<green>{time:YYYY-MM-DD at HH:mm:ss}</green> "
+                "| <cyan>{extra[name]}</cyan> | {message}")
     )
-    root.addHandler(handler)
+    logger = logger.patch(loguru_name_patcher)
 
 
 def cli_main():

@@ -8,9 +8,8 @@
 Evaluate the perplexity of a trained language model.
 """
 
-import logging
+from loguru import logger
 import math
-import os
 import sys
 from argparse import Namespace
 from typing import Iterable, List, Optional
@@ -23,15 +22,16 @@ from fairseq.logging import progress_bar
 from fairseq.logging.meters import StopwatchMeter
 from fairseq.sequence_scorer import SequenceScorer
 from omegaconf import DictConfig
+from fairseq.utils_loguru import loguru_name_patcher, loguru_reset_logger
 
 
-logging.basicConfig(
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    level=os.environ.get("LOGLEVEL", "INFO").upper(),
-    stream=sys.stdout,
+loguru_reset_logger(logger)
+logger.add(
+    sys.stdout, colorize=True,
+    format=("<green>{time:YYYY-MM-DD at HH:mm:ss}</green> "
+            "| <cyan>{extra[name]}</cyan> | {message}")
 )
-logger = logging.getLogger("fairseq_cli.eval_lm")
+logger = logger.patch(loguru_name_patcher)
 
 
 def eval_lm(

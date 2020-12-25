@@ -9,7 +9,7 @@ Run inference for pre-processed data with a trained model.
 """
 
 import ast
-import logging
+from loguru import logger
 import math
 import os
 import sys
@@ -20,12 +20,16 @@ import torch
 from fairseq import checkpoint_utils, options, progress_bar, tasks, utils
 from fairseq.data.data_utils import post_process
 from fairseq.logging.meters import StopwatchMeter, TimeMeter
+from fairseq import utils_loguru
 
 
-logging.basicConfig()
-logging.root.setLevel(logging.INFO)
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+utils_loguru._reset_logger(logger)
+logger.add(
+    sys.stdout, colorize=True,
+    format=("<green>{time:YYYY-MM-DD at HH:mm:ss}</green> "
+            "| <cyan>{extra[name]}</cyan> | {message}")
+)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def add_asr_eval_argument(parser):

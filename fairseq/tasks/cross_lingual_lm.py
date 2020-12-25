@@ -4,12 +4,12 @@
 # LICENSE file in the root directory of this source tree.
 
 import itertools
-import logging
+from loguru import logger
 import os
 from collections import OrderedDict
 
 import numpy as np
-from fairseq import tokenizer, utils
+from fairseq import tokenizer, utils, utils_loguru
 from fairseq.data import ConcatDataset, Dictionary, TokenBlockDataset, data_utils
 from fairseq.data.legacy.masked_lm_dataset import MaskedLMDataset
 from fairseq.data.legacy.masked_lm_dictionary import MaskedLMDictionary
@@ -17,7 +17,7 @@ from fairseq.data.multi_corpus_sampled_dataset import MultiCorpusSampledDataset
 from fairseq.tasks import LegacyFairseqTask, register_task
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_task("cross_lingual_lm")

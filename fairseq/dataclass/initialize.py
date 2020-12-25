@@ -4,13 +4,14 @@
 # LICENSE file in the root directory of this source tree.
 """isort:skip_file"""
 
-import logging
+from loguru import logger
 from typing import Dict, Any
 from hydra.core.config_store import ConfigStore
 from fairseq.dataclass.configs import FairseqConfig
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def hydra_init(cfg_name="config") -> None:

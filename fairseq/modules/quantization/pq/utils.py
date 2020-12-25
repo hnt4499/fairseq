@@ -3,7 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import re
 from operator import attrgetter, itemgetter
 
@@ -13,6 +13,10 @@ import torch.nn as nn
 
 from .modules import PQConv2d, PQEmbedding, PQLinear
 from .pq import PQ
+from fairseq import utils_loguru
+
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def quantize_model_(
@@ -73,7 +77,7 @@ def quantize_model_(
         block_size = get_param(module, layer, block_sizes_config)
         n_centroids = get_param(module, layer, n_centroids_config)
         if verbose:
-            logging.info(
+            logger.info(
                 f"Quantizing layer {layer} with block size {block_size} and {n_centroids} centroids"
             )
 

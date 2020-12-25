@@ -3,7 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import os
 
 import numpy as np
@@ -22,9 +22,10 @@ from fairseq.data.encoders.utils import get_whole_word_mask
 from fairseq.tasks import register_task
 
 from .denoising import DenoisingTask
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_task("multilingual_denoising")

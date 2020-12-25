@@ -9,16 +9,17 @@ except ImportError:
     from collections import Iterable
 import contextlib
 import itertools
-import logging
+from loguru import logger
 import os
 import warnings
 from typing import Optional, Tuple
 
 import numpy as np
 import torch
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def infer_language_pair(path):

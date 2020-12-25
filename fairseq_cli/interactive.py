@@ -9,9 +9,8 @@ Translate raw text with a trained model. Batches data on-the-fly.
 
 import ast
 import fileinput
-import logging
+from loguru import logger
 import math
-import os
 import sys
 import time
 from argparse import Namespace
@@ -25,15 +24,16 @@ from fairseq.dataclass.configs import FairseqConfig
 from fairseq.dataclass.utils import convert_namespace_to_omegaconf
 from fairseq.token_generation_constraints import pack_constraints, unpack_constraints
 from fairseq_cli.generate import get_symbols_to_strip_from_output
+from fairseq.utils_loguru import loguru_name_patcher, loguru_reset_logger
 
 
-logging.basicConfig(
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    level=os.environ.get("LOGLEVEL", "INFO").upper(),
-    stream=sys.stdout,
+loguru_reset_logger(logger)
+logger.add(
+    sys.stdout, colorize=True,
+    format=("<green>{time:YYYY-MM-DD at HH:mm:ss}</green> "
+            "| <cyan>{extra[name]}</cyan> | {message}")
 )
-logger = logging.getLogger("fairseq_cli.interactive")
+logger = logger.patch(loguru_name_patcher)
 
 
 Batch = namedtuple("Batch", "ids src_tokens src_lengths constraints")

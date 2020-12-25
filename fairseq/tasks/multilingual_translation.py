@@ -4,12 +4,12 @@
 # LICENSE file in the root directory of this source tree.
 
 import contextlib
-import logging
+from loguru import logger
 import os
 from collections import OrderedDict
 
 import torch
-from fairseq import metrics, options, utils
+from fairseq import metrics, options, utils, utils_loguru
 from fairseq.data import (
     Dictionary,
     LanguagePairDataset,
@@ -22,7 +22,7 @@ from fairseq.tasks.translation import load_langpair_dataset
 from . import LegacyFairseqTask, register_task
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def _lang_token(lang: str):

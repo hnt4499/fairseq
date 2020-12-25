@@ -3,7 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import os
 import sys
 from typing import Dict, List, Optional
@@ -16,8 +16,10 @@ from fairseq.models import (
     register_model_architecture,
 )
 
+from fairseq import utils_loguru
 
-logger = logging.getLogger(__name__)
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 DEFAULT_MAX_TARGET_POSITIONS = 1024

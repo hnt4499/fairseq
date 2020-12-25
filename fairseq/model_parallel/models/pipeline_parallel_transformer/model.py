@@ -3,12 +3,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.model_parallel.models.pipeline_parallel_transformer.layers import (
     Embedding,
     TransformerDecoderEmbedding,
@@ -34,7 +34,7 @@ from fairseq.models.transformer import (
 from fairseq.modules import SinusoidalPositionalEmbedding
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 DEFAULT_MAX_SOURCE_POSITIONS = 1024

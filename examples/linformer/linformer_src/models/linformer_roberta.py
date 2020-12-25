@@ -6,15 +6,16 @@
 Linformer: Self-Attention with Linear Complexity
 """
 
-import logging
+from loguru import logger
 
 from fairseq.models import register_model, register_model_architecture
 from fairseq.models.roberta import RobertaEncoder, RobertaModel
 
 from ..modules.linformer_sentence_encoder import LinformerSentenceEncoder
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_model("linformer_roberta")

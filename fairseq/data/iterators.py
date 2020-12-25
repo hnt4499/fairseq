@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import itertools
-import logging
+from loguru import logger
 import math
 import operator
 import os
@@ -15,9 +15,11 @@ from threading import Thread
 import numpy as np
 import torch
 from fairseq.data import data_utils
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
+
 
 # Object used by _background_consumer to signal the source is exhausted
 # to the main thread.

@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import io
-import logging
+from loguru import logger
 import os
 import pickle
 import random
@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Mapping, Optional
 
 import torch
 import torch.distributed as dist
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.dataclass.configs import DistributedTrainingConfig, FairseqConfig
 from omegaconf import open_dict
 
@@ -37,7 +37,7 @@ _USE_MEGATRON = False
 _USE_XLA = False
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def is_master(cfg: DistributedTrainingConfig):
@@ -260,9 +260,9 @@ def distributed_init(cfg: FairseqConfig):
         xm.mark_step()
 
     if is_master(cfg.distributed_training):
-        logging.getLogger().setLevel(logging.INFO)
+        utils.loguru_set_level(logger, utils.LoguruLevels.INFO)
     else:
-        logging.getLogger().setLevel(logging.WARNING)
+        utils.loguru_set_level(logger, utils.LoguruLevels.WARNING)
 
     if cfg.common.model_parallel_size > 1:
         try:

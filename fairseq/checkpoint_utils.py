@@ -6,7 +6,7 @@
 import ast
 import collections
 import contextlib
-import logging
+from loguru import logger
 import os
 import re
 import traceback
@@ -22,9 +22,10 @@ from fairseq.dataclass.utils import (
 from fairseq.file_io import PathManager
 from fairseq.models import FairseqDecoder, FairseqEncoder
 from omegaconf import DictConfig, open_dict
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def save_checkpoint(cfg: CheckpointConfig, trainer, epoch_itr, val_loss):

@@ -2,14 +2,21 @@
 
 import argparse
 import fileinput
-import logging
+from loguru import logger
 import os
 import sys
 
 from fairseq.models.transformer import TransformerModel
+from fairseq import utils_loguru
 
 
-logging.getLogger().setLevel(logging.INFO)
+utils_loguru._reset_logger(logger)
+logger.add(
+    sys.stdout, colorize=True,
+    format=("<green>{time:YYYY-MM-DD at HH:mm:ss}</green> "
+            "| <cyan>{extra[name]}</cyan> | {message}")
+)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def main():
@@ -42,21 +49,21 @@ def main():
             "src",
         )
         if os.path.exists(args.user_dir):
-            logging.info("found user_dir:" + args.user_dir)
+            logger.info("found user_dir:" + args.user_dir)
         else:
             raise RuntimeError(
                 "cannot find fairseq examples/translation_moe/src "
                 "(tried looking here: {})".format(args.user_dir)
             )
 
-    logging.info("loading en2fr model from:" + args.en2fr)
+    logger.info("loading en2fr model from:" + args.en2fr)
     en2fr = TransformerModel.from_pretrained(
         model_name_or_path=args.en2fr,
         tokenizer="moses",
         bpe="sentencepiece",
     ).eval()
 
-    logging.info("loading fr2en model from:" + args.fr2en)
+    logger.info("loading fr2en model from:" + args.fr2en)
     fr2en = TransformerModel.from_pretrained(
         model_name_or_path=args.fr2en,
         tokenizer="moses",
@@ -72,7 +79,7 @@ def main():
             for i in range(args.num_experts)
         ]
 
-    logging.info("Type the input sentence and press return:")
+    logger.info("Type the input sentence and press return:")
     for line in fileinput.input(args.files):
         line = line.strip()
         if len(line) == 0:

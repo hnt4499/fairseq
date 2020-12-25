@@ -6,14 +6,14 @@
 Base classes for various fairseq models.
 """
 
-import logging
+from loguru import logger
 from argparse import Namespace
 from typing import Dict, List, Optional, Tuple
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.checkpoint_utils import prune_state_dict
 from fairseq.data import Dictionary
 from fairseq.dataclass.utils import (
@@ -25,7 +25,7 @@ from omegaconf import DictConfig
 from torch import Tensor
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 class BaseFairseqModel(nn.Module):

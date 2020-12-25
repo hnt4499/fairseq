@@ -5,12 +5,12 @@
 
 import itertools
 import json
-import logging
+from loguru import logger
 import math
 import os
 from collections import OrderedDict, defaultdict
 
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.data import (
     AppendTokenDataset,
     ConcatDataset,
@@ -37,7 +37,7 @@ from fairseq.file_io import PathManager
 from fairseq.utils import FileContentsAction, csv_str_list, eval_str_dict
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def _lang_id(dic: Dictionary, lang: str):

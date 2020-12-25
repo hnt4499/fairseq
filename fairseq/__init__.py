@@ -17,6 +17,7 @@ except ImportError:
 __all__ = ["pdb"]
 
 # backwards compatibility to support `from fairseq.meters import AverageMeter`
+from fairseq import utils_loguru
 from fairseq.logging import meters, metrics, progress_bar  # noqa
 
 sys.modules["fairseq.meters"] = meters

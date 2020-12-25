@@ -6,12 +6,12 @@
 RoBERTa: A Robustly Optimized BERT Pretraining Approach.
 """
 
-import logging
+from loguru import logger
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.models import (
     FairseqEncoder,
     FairseqEncoderModel,
@@ -25,7 +25,7 @@ from fairseq.modules.transformer_sentence_encoder import init_bert_params
 from .hub_interface import RobertaHubInterface
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_model("roberta")

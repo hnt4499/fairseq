@@ -5,7 +5,7 @@
 
 import ast
 import inspect
-import logging
+from loguru import logger
 import os
 import re
 from argparse import ArgumentError, ArgumentParser, Namespace
@@ -18,8 +18,10 @@ from fairseq.dataclass.configs import FairseqConfig
 from hydra.core.global_hydra import GlobalHydra
 from hydra.experimental import compose, initialize
 from omegaconf import DictConfig, OmegaConf, open_dict
+from fairseq import utils_loguru
 
-logger = logging.getLogger(__name__)
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def eval_str_list(x, x_type=float):

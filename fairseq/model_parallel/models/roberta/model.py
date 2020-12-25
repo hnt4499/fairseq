@@ -6,12 +6,12 @@
 RoBERTa: A Robustly Optimized BERT Pretraining Approach.
 """
 
-import logging
+from loguru import logger
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.model_parallel.modules import ModelParallelTransformerSentenceEncoder
 from fairseq.models import FairseqEncoder, register_model, register_model_architecture
 from fairseq.models.roberta import (
@@ -36,7 +36,8 @@ try:
 except (ImportError, ModuleNotFoundError):
     has_megatron_submodule = False
 
-logger = logging.getLogger(__name__)
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_model("model_parallel_roberta")

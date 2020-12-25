@@ -4,11 +4,12 @@
 # LICENSE file in the root directory of this source tree.
 
 from . import LegacyFairseqLRScheduler, register_lr_scheduler
-import logging
+from loguru import logger
 import ast
+from fairseq import utils_loguru
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.WARNING)
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_lr_scheduler("manual")

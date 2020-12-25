@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import datetime
-import logging
+from loguru import logger
 import time
 
 import torch
@@ -21,6 +21,7 @@ from fairseq.data.multilingual.multilingual_data_manager import (
 from fairseq.data.multilingual.sampling_method import SamplingMethod
 from fairseq.tasks import LegacyFairseqTask, register_task
 from fairseq.utils import FileContentsAction
+from fairseq import utils_loguru
 
 
 ###
@@ -33,7 +34,7 @@ def get_time_gap(s, e):
 ###
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_task("translation_multi_simple_epoch")

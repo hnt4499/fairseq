@@ -5,13 +5,17 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import logging
+from loguru import logger
 import math
 
 import torch
 import torch.nn.functional as F
 from fairseq import utils
 from fairseq.criterions import FairseqCriterion, register_criterion
+from fairseq import utils_loguru
+
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_criterion("cross_entropy_acc")
@@ -25,7 +29,7 @@ class CrossEntropyWithAccCriterion(FairseqCriterion):
         target = target.view(-1)
         lprobs = model.get_normalized_probs(net_output, log_probs=log_probs)
         if not hasattr(lprobs, "batch_first"):
-            logging.warning(
+            logger.warning(
                 "ERROR: we need to know whether "
                 "batch first for the net output; "
                 "you need to set batch_first attribute for the return value of "

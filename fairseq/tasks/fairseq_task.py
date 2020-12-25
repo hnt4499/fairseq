@@ -3,21 +3,21 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import os
 import warnings
 from argparse import Namespace
 from typing import List
 
 import torch
-from fairseq import metrics, search, tokenizer, utils
+from fairseq import metrics, search, tokenizer, utils, utils_loguru
 from fairseq.data import Dictionary, FairseqDataset, data_utils, encoders, iterators
 from fairseq.dataclass import FairseqDataclass
 from fairseq.dataclass.utils import gen_parser_from_dataclass
 from omegaconf import DictConfig
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 class FairseqTask(object):

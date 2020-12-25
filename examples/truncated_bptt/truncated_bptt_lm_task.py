@@ -3,13 +3,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import os
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
 
 import torch
-from fairseq import distributed_utils as dist_utils, utils
+from fairseq import distributed_utils as dist_utils, utils, utils_loguru
 from fairseq.data import (
     Dictionary,
     TokenBlockDataset,
@@ -21,7 +21,7 @@ from fairseq.tasks import FairseqTask, register_task
 from omegaconf import II
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @dataclass

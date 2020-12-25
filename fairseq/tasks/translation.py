@@ -5,12 +5,12 @@
 
 import itertools
 import json
-import logging
+from loguru import logger
 import os
 from argparse import Namespace
 
 import numpy as np
-from fairseq import metrics, options, utils
+from fairseq import metrics, options, utils, utils_loguru
 from fairseq.data import (
     AppendTokenDataset,
     ConcatDataset,
@@ -28,7 +28,7 @@ from fairseq.tasks import LegacyFairseqTask, register_task
 EVAL_BLEU_ORDER = 4
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 def load_langpair_dataset(

@@ -7,7 +7,7 @@
 Data pre-processing: build vocabularies and binarize training data.
 """
 
-import logging
+from loguru import logger
 import os
 import shutil
 import sys
@@ -18,15 +18,16 @@ from multiprocessing import Pool
 from fairseq import options, tasks, utils
 from fairseq.binarizer import Binarizer
 from fairseq.data import indexed_dataset
+from fairseq.utils_loguru import loguru_name_patcher, loguru_reset_logger
 
 
-logging.basicConfig(
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    level=os.environ.get("LOGLEVEL", "INFO").upper(),
-    stream=sys.stdout,
+loguru_reset_logger(logger)
+logger.add(
+    sys.stdout, colorize=True,
+    format=("<green>{time:YYYY-MM-DD at HH:mm:ss}</green> "
+            "| <cyan>{extra[name]}</cyan> | {message}")
 )
-logger = logging.getLogger("fairseq_cli.preprocess")
+logger = logger.patch(loguru_name_patcher)
 
 
 def main(args):
@@ -34,10 +35,9 @@ def main(args):
 
     os.makedirs(args.destdir, exist_ok=True)
 
-    logger.addHandler(
-        logging.FileHandler(
-            filename=os.path.join(args.destdir, "preprocess.log"),
-        )
+    logger.add(
+        os.path.join(args.destdir, "preprocess.log"), colorize=False,
+        format=("{time:YYYY-MM-DD at HH:mm:ss} | {extra[name]} | {message}")
     )
     logger.info(args)
 

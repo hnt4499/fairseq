@@ -4,7 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from dataclasses import dataclass, field
-import logging
+from loguru import logger
 import math
 from typing import Optional, Tuple
 from omegaconf import II
@@ -24,9 +24,10 @@ from fairseq.modules import (
 )
 from fairseq.tasks import FairseqTask
 from fairseq.utils import buffered_arange
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 AGGREGATOR_CHOICES = ChoiceEnum(["cnn", "gru"])

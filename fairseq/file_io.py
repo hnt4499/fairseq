@@ -5,13 +5,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import os
 import shutil
 from typing import List, Optional
+from fairseq import utils_loguru
 
 
-logger = logging.getLogger(__file__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 try:
@@ -23,9 +24,9 @@ try:
 
         FVCorePathManager.register_handler(S3PathHandler())
     except KeyError:
-        logging.warning("S3PathHandler already registered.")
+        logger.warning("S3PathHandler already registered.")
     except ImportError:
-        logging.debug(
+        logger.debug(
             "S3PathHandler couldn't be imported. Either missing fb-only files, or boto3 module."
         )
 

@@ -8,11 +8,11 @@ Natural Language Generation, Translation, and Comprehension
 """
 from typing import Optional
 
-import logging
+from loguru import logger
 
 import torch
 import torch.nn as nn
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.models import register_model, register_model_architecture
 from fairseq.models.transformer import TransformerModel
 from fairseq.modules.transformer_sentence_encoder import init_bert_params
@@ -20,7 +20,7 @@ from fairseq.modules.transformer_sentence_encoder import init_bert_params
 from .hub_interface import BARTHubInterface
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_model("bart")

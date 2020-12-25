@@ -3,7 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 from operator import attrgetter
 
 import torch.distributed as dist
@@ -11,6 +11,10 @@ import torch.nn as nn
 
 from ..pq.utils import attrsetter, get_layers
 from .modules import ActivationQuantizer, IntConv2d, IntEmbedding, IntLinear
+from fairseq import utils_loguru
+
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 MAPPING = {nn.Linear: IntLinear, nn.Embedding: IntEmbedding, nn.Conv2d: IntConv2d}
@@ -41,7 +45,7 @@ def quantize_model_(model, p=0.2, bits=8, update_step=3000):
         # recover module
         module = attrgetter(layer)(model)
         if is_master_process:
-            logging.info(
+            logger.info(
                 f"Quantizing layer {layer} with bits={bits} and QuantNoise={p}"
             )
 
@@ -64,7 +68,7 @@ def quantize_model_(model, p=0.2, bits=8, update_step=3000):
 
         else:
             if is_master_process:
-                logging.info(f"Module {module} not yet supported for quantization")
+                logger.info(f"Module {module} not yet supported for quantization")
             continue
 
         # activation quantization

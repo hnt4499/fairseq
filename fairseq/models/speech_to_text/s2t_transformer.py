@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-import logging
+from loguru import logger
 import math
 from typing import Dict, List, Optional, Tuple
 
 import torch
 import torch.nn as nn
-from fairseq import checkpoint_utils, utils
+from fairseq import checkpoint_utils, utils, utils_loguru
 from fairseq.data.data_utils import lengths_to_padding_mask
 from fairseq.models import (
     FairseqEncoder,
@@ -25,7 +25,7 @@ from fairseq.modules import (
 from torch import Tensor
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 class Conv1dSubsampler(nn.Module):

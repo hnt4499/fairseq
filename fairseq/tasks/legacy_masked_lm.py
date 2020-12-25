@@ -4,11 +4,11 @@
 # LICENSE file in the root directory of this source tree.
 
 import itertools
-import logging
+from loguru import logger
 import os
 
 import numpy as np
-from fairseq import tokenizer, utils
+from fairseq import tokenizer, utils, utils_loguru
 from fairseq.data import ConcatDataset, Dictionary, data_utils, indexed_dataset
 from fairseq.data.legacy.block_pair_dataset import BlockPairDataset
 from fairseq.data.legacy.masked_lm_dataset import MaskedLMDataset
@@ -16,7 +16,7 @@ from fairseq.data.legacy.masked_lm_dictionary import BertDictionary
 from fairseq.tasks import LegacyFairseqTask, register_task
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_task("legacy_masked_lm")

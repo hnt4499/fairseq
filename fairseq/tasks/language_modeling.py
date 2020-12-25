@@ -3,14 +3,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import os
 from dataclasses import dataclass, field
 from typing import Optional
 
 import numpy as np
 import torch
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.data import (
     AppendTokenDataset,
     Dictionary,
@@ -35,7 +35,9 @@ from omegaconf import II
 
 SAMPLE_BREAK_MODE_CHOICES = ChoiceEnum(["none", "complete", "complete_doc", "eos"])
 SHORTEN_METHOD_CHOICES = ChoiceEnum(["none", "truncate", "random_crop"])
-logger = logging.getLogger(__name__)
+
+
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @dataclass

@@ -3,10 +3,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
+from loguru import logger
 import os
 
-from fairseq import utils
+from fairseq import utils, utils_loguru
 from fairseq.data import (
     AppendTokenDataset,
     DenoisingDataset,
@@ -25,7 +25,7 @@ from fairseq.tasks import LegacyFairseqTask, register_task
 import numpy as np
 
 
-logger = logging.getLogger(__name__)
+logger = logger.patch(utils_loguru.loguru_name_patcher)
 
 
 @register_task("denoising")
