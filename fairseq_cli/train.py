@@ -395,8 +395,8 @@ def validate(
                 if val_suppress_progress_bar:
                     if (val_log_interval is not None and val_log_interval > 0
                             and (i + 1) % val_log_interval == 0):
-                        logger.info(f"valid on '{subset} subset: "
-                                    f"{i + 1}/{len(progress)}'")
+                        logger.info(f"valid on '{subset}' subset: "
+                                    f"{i + 1}/{len(progress)}")
 
         # log validation stats
         stats = get_valid_stats(cfg, trainer, agg.get_smoothed_values())
