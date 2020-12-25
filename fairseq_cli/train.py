@@ -60,6 +60,15 @@ def main(cfg: DictConfig) -> None:
     if distributed_utils.is_master(cfg.distributed_training):
         checkpoint_utils.verify_checkpoint_directory(cfg.checkpoint.save_dir)
 
+    # Set up log if needed
+    if cfg.common.get("save_log", False):
+        log_path = os.path.join(cfg.checkpoint.save_dir, "training.log")
+        logger.add(
+            os.path.realpath(log_path), colorize=False,
+            format=("{time:YYYY-MM-DD at HH:mm:ss} "
+                    "| {extra[name]} | {message}")
+        )
+
     # Print args
     logger.info(cfg)
 

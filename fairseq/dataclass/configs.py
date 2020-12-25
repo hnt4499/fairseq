@@ -186,6 +186,12 @@ class CommonConfig(FairseqDataclass):
             "help": "when using Hydra, reset the logging at the beginning of training"
         },
     )
+    save_log: bool = field(
+        default=False,
+        metadata={
+            "help": "if set, write logs to the working directory."
+        },
+    )
 
 
 @dataclass
