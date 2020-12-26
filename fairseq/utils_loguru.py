@@ -46,3 +46,41 @@ def get_effective_level(logger):
     for handler in logger._core.handlers.values():
         levels.append(handler.levelno)
     return min(levels)
+
+
+def loguru_emit_some_handlers(logger, handler_ids, message, name,
+                              level_id="INFO"):
+    """Emit message using specific handlers while ignoring others. Currently
+    only supports for non-colorized messages.
+
+    Parameters
+    ----------
+    logger : loguru._logger.Logger
+        Loguru logger.
+    handler_ids : list of int
+        List of handler IDs to deal with.
+    message : str
+        Message to emit.
+    name : str
+        Logger name.
+    level_id : str
+        Level name.
+
+    """
+    from loguru._recattrs import RecordLevel
+    from loguru._datetime import aware_now
+
+    core = logger._core
+    level_name, level_no, _, level_icon = core.levels[level_id]
+
+    for handler_id in handler_ids:
+        handler = core.handlers[handler_id]
+        log_record = {
+            "message": message,
+            "level": RecordLevel(level_name, level_no, level_icon),
+            "exception": None,
+            "time": aware_now(),
+            "extra": {"name": name},
+        }
+        handler.emit(log_record, level_id, from_decorator=False, is_raw=False,
+                     colored_message=None)

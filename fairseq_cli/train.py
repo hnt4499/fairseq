@@ -31,7 +31,11 @@ from fairseq.logging import meters, metrics, progress_bar
 from fairseq.model_parallel.megatron_trainer import MegatronTrainer
 from omegaconf import DictConfig
 from fairseq.trainer import Trainer
-from fairseq.utils_loguru import loguru_name_patcher, loguru_reset_logger
+from fairseq.utils_loguru import (
+    loguru_name_patcher,
+    loguru_reset_logger,
+    loguru_emit_some_handlers
+)
 
 
 loguru_reset_logger(logger)
@@ -83,7 +87,11 @@ def main(cfg: DictConfig) -> None:
     # Build model and criterion
     model = task.build_model(cfg.model)
     criterion = task.build_criterion(cfg.criterion)
-    if not cfg.common.get("do_not_log_model", False):
+    if cfg.common.get("do_not_log_model", False):
+        loguru_emit_some_handlers(
+            logger, handler_ids=[2], message=model, name="fairseq_cli.train",
+            level_id="INFO")
+    else:
         logger.info(model)
     logger.info("task: {}".format(task.__class__.__name__))
     logger.info("model: {}".format(model.__class__.__name__))
