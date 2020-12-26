@@ -199,6 +199,13 @@ class CommonConfig(FairseqDataclass):
                     "lot of space)."
         },
     )
+    do_not_log_config: bool = field(
+        default=False,
+        metadata={
+            "help": "if set, do not log full config (which usually takes up a "
+                    "lot of space)."
+        },
+    )
 
 
 @dataclass

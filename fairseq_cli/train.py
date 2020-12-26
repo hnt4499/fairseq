@@ -74,7 +74,12 @@ def main(cfg: DictConfig) -> None:
         )
 
     # Print args
-    logger.info(cfg)
+    if cfg.common.get("do_not_log_config", False):
+        loguru_emit_some_handlers(
+            logger, handler_ids=[2], message=cfg, name="fairseq_cli.train",
+            level_id="INFO")
+    else:
+        logger.info(cfg)
 
     # Setup task, e.g., translation, language modeling, etc.
     task = tasks.setup_task(cfg.task)
