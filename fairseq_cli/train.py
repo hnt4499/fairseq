@@ -7,6 +7,7 @@
 Train a new model on one or across multiple GPUs.
 """
 
+import json
 import argparse
 from loguru import logger
 import math
@@ -26,7 +27,10 @@ from fairseq import (
     utils,
 )
 from fairseq.data import iterators
-from fairseq.dataclass.utils import convert_namespace_to_omegaconf
+from fairseq.dataclass.utils import (
+    convert_namespace_to_omegaconf,
+    convert_cfg_to_dict
+)
 from fairseq.logging import meters, metrics, progress_bar
 from fairseq.model_parallel.megatron_trainer import MegatronTrainer
 from omegaconf import DictConfig
@@ -74,12 +78,13 @@ def main(cfg: DictConfig) -> None:
         )
 
     # Print args
+    cfg_str = json.dumps(convert_cfg_to_dict(cfg), indent=2)
     if cfg.common.get("do_not_log_config", False):
         loguru_emit_some_handlers(
-            logger, handler_ids=[2], message=cfg, name="fairseq_cli.train",
+            logger, handler_ids=[2], message=cfg_str, name="fairseq_cli.train",
             level_id="INFO")
     else:
-        logger.info(cfg)
+        logger.info(cfg_str)
 
     # Setup task, e.g., translation, language modeling, etc.
     task = tasks.setup_task(cfg.task)

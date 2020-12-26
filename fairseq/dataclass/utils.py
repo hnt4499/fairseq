@@ -452,3 +452,25 @@ def merge_with_parent(dc: FairseqDataclass, cfg: FairseqDataclass):
     merged_cfg.__dict__["_parent"] = cfg.__dict__["_parent"]
     OmegaConf.set_struct(merged_cfg, True)
     return merged_cfg
+
+
+def convert_cfg_to_dict(cfg):
+    """Convert config to pure `dict` (JSON-serializable)."""
+    cfg = OmegaConf.to_container(cfg, resolve=True, enum_to_str=True)
+    cfg = _convert_cfg_to_dict(cfg)
+    return cfg
+
+
+def _convert_cfg_to_dict(cfg):
+    if not isinstance(cfg, dict):
+        if isinstance(cfg, Namespace):
+            cfg = vars(cfg)
+        else:
+            return cfg
+    new_cfg = {}
+    for key, value in cfg.items():
+        if isinstance(value, Namespace):
+            value = vars(value)
+        value = _convert_cfg_to_dict(value)
+        new_cfg[key] = value
+    return new_cfg
