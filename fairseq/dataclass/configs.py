@@ -192,6 +192,13 @@ class CommonConfig(FairseqDataclass):
             "help": "if set, write logs to the working directory."
         },
     )
+    do_not_log_model: bool = field(
+        default=False,
+        metadata={
+            "help": "if set, do not log model info (which usually takes up a "
+                    "lot of space)."
+        },
+    )
 
 
 @dataclass
