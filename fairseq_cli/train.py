@@ -414,6 +414,26 @@ def validate(
 
         # create a new root metrics aggregator so validation metrics
         # don't pollute other aggregators (e.g., train meters)
+        if (utils.get_task_name(cfg.task) == "translation"
+                and getattr(task.args, "eval_write_samples", False)):
+            results_save_dir = os.path.join(
+                cfg.checkpoint.save_dir, "translation_results")
+            os.makedirs(results_save_dir, exist_ok=True)
+            # Refence path: skip if existed, since we only need it once
+            task._curr_ref_path = os.path.join(
+                results_save_dir, f"{subset}_ref.txt")
+            if os.path.isfile(task._curr_ref_path):
+                task._curr_ref_path = None
+            # Hypothesis path
+            task._curr_hyp_path = os.path.join(
+                results_save_dir,
+                f"{subset}_hyp."
+                f"{epoch_itr.epoch}_{trainer.get_num_updates()}.txt"
+            )
+        else:
+            task._curr_ref_path = None
+            task._curr_hyp_path = None
+
         with metrics.aggregate(new_root=True) as agg:
             for i, sample in enumerate(progress):
                 trainer.valid_step(sample)

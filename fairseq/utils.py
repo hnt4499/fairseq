@@ -736,3 +736,12 @@ def eval_bool(x, default=False):
         return bool(eval(x))
     except TypeError:
         return default
+
+
+def get_task_name(cfg):
+    """Get task name, e.g., translation."""
+    task_name = getattr(cfg, "task", None)
+    if not isinstance(task_name, str):
+        task_name = getattr(cfg, "_name", None)
+    assert task_name is not None
+    return task_name

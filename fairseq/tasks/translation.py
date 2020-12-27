@@ -232,11 +232,16 @@ class TranslationTask(LegacyFairseqTask):
                             help='generation args for BLUE scoring, '
                                  'e.g., \'{"beam": 4, "lenpen": 0.6}\'')
         parser.add_argument('--eval-bleu-print-samples', type=int, default=0,
-                            help='Maximum number of translation samples '
+                            help='maximum number of translation samples '
                                  '(hypothesis and reference pairs) to print. '
                                  'Only the first pairs within each batch is '
                                  'considered. Defaults to 0 (meaning no '
                                  'samples will be ''printed).')
+        parser.add_argument('--eval-write-samples', action="store_true", default=False,
+                            help='whether to write/save reference and '
+                                 'hypothesis sentences to a local file. If '
+                                 'set, files will be saved to '
+                                 '`save_dir`/results with respective index.')
         # fmt: on
 
     def __init__(self, args, src_dict, tgt_dict):
@@ -447,6 +452,17 @@ class TranslationTask(LegacyFairseqTask):
                     escape_unk=True,  # don't count <unk> as matches to the hypo
                 )
             )
+
+        # Save to file
+        if getattr(self, "_curr_ref_path", None) is not None:
+            with open(self._curr_ref_path, "a") as fout:
+                for ref in refs:
+                    fout.write(ref + "\n")
+        if getattr(self, "_curr_hyp_path", None) is not None:
+            with open(self._curr_hyp_path, "a") as fout:
+                for hyp in hyps:
+                    fout.write(hyp + "\n")
+
         if self.num_samples_printed < self.args.eval_bleu_print_samples:
             logger.info("example hypothesis: " + hyps[0])
             logger.info("example reference: " + refs[0])
