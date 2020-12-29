@@ -6,6 +6,7 @@
 import math
 from typing import Any, Dict, List, Optional, Tuple
 
+import numpy as np
 import torch
 import torch.nn as nn
 from fairseq import utils
@@ -188,6 +189,11 @@ class TransformerModel(FairseqEncoderDecoderModel):
                             help='block size of quantization noise at training time')
         parser.add_argument('--quant-noise-scalar', type=float, metavar='D', default=0,
                             help='scalar quantization noise and scalar quantization at training time')
+        # additional args
+        parser.add_argument('--shuffle-embeddings', default=False,
+                            action='store_true',
+                            help='whether to shuffle the word embeddings '
+                                 'before feeding it to subsequent layers.')
         # fmt: on
 
     @classmethod
@@ -335,6 +341,7 @@ class TransformerEncoder(FairseqEncoder):
         self.max_source_positions = args.max_source_positions
 
         self.embed_tokens = embed_tokens
+        self.shuffle_embeddings = getattr(args, "shuffle_embeddings", False)
 
         self.embed_scale = 1.0 if args.no_scale_embedding else math.sqrt(embed_dim)
 
@@ -389,6 +396,7 @@ class TransformerEncoder(FairseqEncoder):
         # embed tokens and positions
         if token_embedding is None:
             token_embedding = self.embed_tokens(src_tokens)
+        self._do_shuffle_embeddings(token_embedding)
         x = embed = self.embed_scale * token_embedding
         if self.embed_positions is not None:
             x = embed + self.embed_positions(src_tokens)
@@ -398,6 +406,28 @@ class TransformerEncoder(FairseqEncoder):
         if self.quant_noise is not None:
             x = self.quant_noise(x)
         return x, embed
+
+    def _do_shuffle_embeddings(self, embeddings):
+        """Randomly shuffle an embedding matrix given the shuffle portion.
+
+        Args:
+            embeddings (torch.Tensor): tensor of shape (*, emb_dim), where *
+            could be of any shape and size.
+        """
+        # Only shuffle during training
+        if self.training and self.shuffle_embeddings:
+            shuffle_portion = 0.2  # experimenting
+            emb_dim = embeddings.shape[-1]
+            # Get shuffle indices
+            random_idxs = np.arange(emb_dim)
+            random_patch = np.random.choice(
+                random_idxs, size=int(emb_dim * shuffle_portion),
+                replace=False)
+            random_idxs[np.sort(random_patch)] = random_patch
+            # Shuffle
+            embeddings = embeddings.index_select(
+                dim=-1, index=torch.from_numpy(random_idxs))
+        return embeddings
 
     def forward(
         self,
