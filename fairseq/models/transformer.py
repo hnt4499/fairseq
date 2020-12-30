@@ -396,7 +396,7 @@ class TransformerEncoder(FairseqEncoder):
         # embed tokens and positions
         if token_embedding is None:
             token_embedding = self.embed_tokens(src_tokens)
-        self._do_shuffle_embeddings(token_embedding)
+        token_embedding = self._do_shuffle_embeddings(token_embedding)
         x = embed = self.embed_scale * token_embedding
         if self.embed_positions is not None:
             x = embed + self.embed_positions(src_tokens)
@@ -416,7 +416,7 @@ class TransformerEncoder(FairseqEncoder):
         """
         # Only shuffle during training
         if self.training and self.shuffle_embeddings:
-            shuffle_portion = 0.5  # experimenting
+            shuffle_portion = 0.2  # experimenting
             emb_dim = embeddings.shape[-1]
             # Get shuffle indices
             random_idxs = np.arange(emb_dim)
