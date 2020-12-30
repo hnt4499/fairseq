@@ -416,7 +416,7 @@ class TransformerEncoder(FairseqEncoder):
         """
         # Only shuffle during training
         if self.training and self.shuffle_embeddings:
-            shuffle_portion = 0.2  # experimenting
+            shuffle_portion = 0.5  # experimenting
             emb_dim = embeddings.shape[-1]
             # Get shuffle indices
             random_idxs = np.arange(emb_dim)
@@ -428,7 +428,7 @@ class TransformerEncoder(FairseqEncoder):
             embeddings = embeddings.index_select(
                 dim=-1,
                 index=torch.from_numpy(random_idxs).to(embeddings.device)
-            )
+            ).contiguous()
         return embeddings
 
     def forward(
