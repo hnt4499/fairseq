@@ -426,7 +426,9 @@ class TransformerEncoder(FairseqEncoder):
             random_idxs[np.sort(random_patch)] = random_patch
             # Shuffle
             embeddings = embeddings.index_select(
-                dim=-1, index=torch.from_numpy(random_idxs))
+                dim=-1,
+                index=torch.from_numpy(random_idxs).to(embeddings.device)
+            )
         return embeddings
 
     def forward(
